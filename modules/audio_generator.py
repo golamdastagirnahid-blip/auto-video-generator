@@ -1,7 +1,6 @@
 import os
 import asyncio
 import edge_tts
-from pydub import AudioSegment
 from config import Config
 from rich.console import Console
 
@@ -17,16 +16,18 @@ class AudioGenerator:
 
     def generate_scene_audio(self, text: str, index: int) -> dict:
         console.print(f"  🎤 Generating voice for scene {index}...")
-        console.print(f"  📝 Text: [cyan]{text[:50]}...[/cyan]")
+        console.print(f"  📝 Text: [cyan]{text[:50]}[/cyan]")
 
         output_path = os.path.join(self.temp_dir, f"audio_{index:04d}.mp3")
 
-        # Generate the audio file
+        # Generate the audio file and get subtitles
         subtitles = asyncio.run(self._speak(text, output_path))
 
-        # Get how long the audio is in seconds
-        audio    = AudioSegment.from_mp3(output_path)
-        duration = len(audio) / 1000.0
+        # Get duration using moviepy instead of pydub
+        from moviepy.editor import AudioFileClip
+        audio    = AudioFileClip(output_path)
+        duration = audio.duration
+        audio.close()
 
         console.print(f"  ✅ Voice ready - Duration: [green]{duration:.1f} seconds[/green]")
 
@@ -50,10 +51,8 @@ class AudioGenerator:
         with open(output_path, "wb") as f:
             async for chunk in communicate.stream():
                 if chunk["type"] == "audio":
-                    # Write audio data to file
                     f.write(chunk["data"])
                 elif chunk["type"] == "WordBoundary":
-                    # Save word timing for captions
                     subtitles.append({
                         "text"     : chunk["text"],
                         "offset"   : chunk["offset"],
