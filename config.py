@@ -6,8 +6,8 @@ class Config:
     # YOUR FREE API KEYS
     # We will add real keys later
     # ─────────────────────────────
-    PEXELS_API_KEY  = "YOUR_PEXELS_KEY_HERE"
-    PIXABAY_API_KEY = "YOUR_PIXABAY_KEY_HERE"
+    PEXELS_API_KEY  = "0iQEQYCho7KNGqZ3SRxH8xfJPvYPxKhnM2zySk4b7vmWNa9kgEKmcNXI"
+    PIXABAY_API_KEY = "55491184-776e653111d418bfec34de66d"
 
     # ─────────────────────────────
     # VIDEO SETTINGS
